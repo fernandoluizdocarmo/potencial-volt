@@ -1,14 +1,25 @@
 import os
 import json
 from datetime import datetime
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for, send_from_directory
 from database import get_connection, init_db
 
-app = Flask(__name__)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+app = Flask(
+    __name__,
+    template_folder=os.path.join(BASE_DIR, 'templates'),
+    static_folder=os.path.join(BASE_DIR, 'static'),
+    static_url_path='/static'
+)
 app.config['JSON_AS_ASCII'] = False
 
 # Garante que o banco exista
 init_db()
+
+@app.route('/static/<path:filename>')
+def servir_static(filename):
+    return send_from_directory(os.path.join(BASE_DIR, 'static'), filename)
 
 # ======================== ROTAS DE PÁGINAS ========================
 
