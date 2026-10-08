@@ -1,0 +1,199 @@
+/* ESTILOS GERAIS - POTENCIAL VOLT */
+:root {
+    --navy-main: #0b192c;
+    --navy-light: #1e293b;
+    --electric-gold: #f59e0b;
+    --electric-yellow: #fbbf24;
+    --accent-blue: #2563eb;
+    --bg-page: #f8fafc;
+}
+
+body {
+    background-color: var(--bg-page);
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    color: #1e293b;
+    min-height: 100vh;
+}
+
+.bg-dark-navy {
+    background-color: var(--navy-main) !important;
+}
+
+.bg-navy {
+    background-color: var(--navy-main) !important;
+}
+
+.text-navy {
+    color: var(--navy-main) !important;
+}
+
+.btn-navy {
+    background-color: var(--navy-main);
+    color: #ffffff;
+}
+
+.btn-navy:hover {
+    background-color: #162a45;
+    color: #ffffff;
+}
+
+/* NAVBAR */
+.brand-bolt {
+    font-size: 1.35rem;
+    filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6));
+}
+
+.fs-7 {
+    font-size: 0.78rem;
+}
+
+/* PILLS DE NAVEGAÇÃO */
+.custom-pills .nav-link {
+    color: #475569;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 8px;
+    margin-right: 6px;
+    transition: all 0.2s ease;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+}
+
+.custom-pills .nav-link:hover {
+    color: var(--navy-main);
+    background-color: #f1f5f9;
+}
+
+.custom-pills .nav-link.active {
+    background-color: var(--navy-main);
+    color: #ffffff;
+    border-color: var(--navy-main);
+    box-shadow: 0 4px 10px rgba(11, 25, 44, 0.15);
+}
+
+/* DESTAQUE DO SELETOR DE REGIÃO */
+.region-selector-card {
+    background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
+    border-left: 6px solid var(--accent-blue) !important;
+    border-radius: 10px;
+}
+
+.badge-region-info {
+    min-width: 140px;
+}
+
+/* CARDS */
+.card {
+    border-radius: 10px;
+}
+
+.card-totais {
+    border-top: 4px solid var(--electric-gold) !important;
+}
+
+.total-geral-box {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border: 2px dashed #94a3b8;
+}
+
+/* TABELAS */
+.table thead th {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table-sm td, .table-sm th {
+    padding: 0.5rem;
+}
+
+/* TABELA DE MATRIZ DE PREÇOS */
+.input-preco-matriz {
+    width: 100px;
+    font-weight: 600;
+    text-align: right;
+}
+
+/* STATUS BADGES */
+.badge-status-pendente {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.badge-status-aprovado {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.badge-status-concluido {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.badge-status-recusado {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+/* SERVICE CARDS & FORMULÁRIO DE SELEÇÃO INTERATIVO */
+.service-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #ffffff;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.service-card:hover {
+    border-color: var(--accent-blue);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+}
+
+.service-card.item-adicionado {
+    border-color: #10b981;
+    background-color: #f0fdf4;
+}
+
+.service-price-tag {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #0b192c;
+}
+
+.category-pill-btn {
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.category-pill-btn.active, .category-pill-btn:hover {
+    background-color: var(--navy-main);
+    color: #ffffff;
+    border-color: var(--navy-main);
+}
+
+.route-arrow-icon {
+    font-size: 1.8rem;
+    color: var(--accent-blue);
+}
+
+.btn-generate-quote {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #ffffff;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.btn-generate-quote:hover {
+    background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(217, 119, 6, 0.4);
+}
+

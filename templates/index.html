@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Potencial Volt - Orçamentos Elétricos</title>
+    <!-- PWA / App Mobile -->
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Potencial Volt">
+    <link rel="icon" type="image/svg+xml" href="/static/icons/icon.svg">
+    <link rel="apple-touch-icon" href="/static/icons/icon.svg">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <!-- NAVBAR PRINCIPAL -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark-navy sticky-top shadow-sm">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="#">
+                <span class="brand-bolt"><i class="fa-solid fa-bolt-lightning text-warning"></i></span>
+                <span class="text-white">POTENCIAL <span class="text-warning">VOLT</span></span>
+                <span class="badge bg-warning text-dark ms-2 fw-semibold fs-7">Orçamentos por Região</span>
+            </a>
+            <div class="d-flex align-items-center gap-2">
+                <button type="button" class="btn btn-warning btn-sm fw-bold d-none text-dark shadow-sm" id="btnInstalarApp" onclick="instalarAppPWA()">
+                    <i class="fa-solid fa-mobile-screen-button me-1"></i> Instalar no Celular
+                </button>
+                <span class="text-light small d-none d-md-inline" id="navEmpresaNome"><i class="fa-solid fa-shield-halved text-success me-1"></i> Sistema Ativo</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTAINER PRINCIPAL -->
+    <div class="container-fluid px-4 py-4">
+
+        <!-- NAVEGAÇÃO EM ABAS -->
+        <ul class="nav nav-pills custom-pills mb-4" id="mainTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="novo-orcamento-tab" data-bs-toggle="pill" data-bs-target="#novo-orcamento" type="button" role="tab">
+                    <i class="fa-solid fa-calculator me-2"></i>Novo Orçamento
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="historico-tab" data-bs-toggle="pill" data-bs-target="#historico" type="button" role="tab" onclick="carregarHistorico()">
+                    <i class="fa-solid fa-clock-rotate-left me-2"></i>Histórico de Orçamentos
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="matriz-tab" data-bs-toggle="pill" data-bs-target="#matriz" type="button" role="tab" onclick="carregarMatrizPrecos()">
+                    <i class="fa-solid fa-table-cells me-2"></i>Preços por Região
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="cadastros-tab" data-bs-toggle="pill" data-bs-target="#cadastros" type="button" role="tab" onclick="carregarCadastros()">
+                    <i class="fa-solid fa-layer-group me-2"></i>Gerenciar Serviços & Regiões
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="config-tab" data-bs-toggle="pill" data-bs-target="#config" type="button" role="tab" onclick="carregarConfiguracoes()">
+                    <i class="fa-solid fa-gear me-2"></i>Configurações da Empresa
+                </button>
+            </li>
+        </ul>
+
+        <!-- CONTEÚDO DAS ABAS -->
+        <div class="tab-content" id="mainTabContent">
+
+            <!-- ========================================== -->
+            <!-- ABA 1: NOVO ORÇAMENTO -->
+            <!-- ========================================== -->
+            <div class="tab-pane fade show active" id="novo-orcamento" role="tabpanel">
+                
+                <!-- SELETOR DUPLO: ONDE EU MORO -> ONDE VOU FAZER O SERVIÇO -->
+                <div class="card region-selector-card shadow-sm mb-4 border-primary">
+                    <div class="card-body p-3 p-md-4">
+                        <div class="row align-items-center g-3">
+                            <div class="col-md-5">
+                                <label for="selectOrigem" class="form-label fw-bold text-dark mb-1">
+                                    <i class="fa-solid fa-house-chimney text-primary me-2"></i>1. Onde Eu Moro (Sua Base / Saída):
+                                </label>
+                                <select id="selectOrigem" class="form-select form-select-lg fw-bold border-2 border-primary shadow-sm" onchange="aoMudarRota()">
+                                    <!-- Carregado via JS -->
+                                </select>
+                                <small class="text-muted">Cidade onde você reside/está sediado</small>
+                            </div>
+                            
+                            <div class="col-md-2 text-center d-none d-md-block">
+                                <div class="route-arrow-icon my-1">
+                                    <i class="fa-solid fa-arrow-right text-warning"></i>
+                                </div>
+                                <span class="badge bg-navy text-white px-3 py-1">Deslocamento</span>
+                            </div>
+
+                            <div class="col-md-5">
+                                <label for="selectDestino" class="form-label fw-bold text-dark mb-1">
+                                    <i class="fa-solid fa-location-dot text-danger me-2"></i>2. Onde Vou Fazer o Serviço (Local do Cliente):
+                                </label>
+                                <select id="selectDestino" class="form-select form-select-lg fw-bold border-2 border-danger shadow-sm" onchange="aoMudarRota()">
+                                    <!-- Carregado via JS -->
+                                </select>
+                                <small class="text-muted">Os preços dos serviços serão os cobrados nesta cidade</small>
+                            </div>
+                        </div>
+
+                        <!-- BANNER DO TRAJETO E TAXA CALCULADA -->
+                        <div class="alert alert-light border mt-3 mb-0 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                <span class="text-muted small d-block">Trajeto do Atendimento:</span>
+                                <strong class="fs-6 text-navy" id="textoTrajeto">Belo Horizonte (BH) ➔ Belo Horizonte (BH)</strong>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="text-end">
+                                    <span class="text-muted small d-block">Taxa de Deslocamento Automática:</span>
+                                    <strong class="fs-5 text-success" id="badgeTaxaDeslocamento">R$ 0,00</strong>
+                                </div>
+                                <div class="badge bg-success-subtle text-success border border-success px-3 py-2">
+                                    <i class="fa-solid fa-bolt me-1"></i> Preços de <span id="badgeCidadeDestino">BH</span> Ativos
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <!-- COLUNA ESQUERDA: CLIENTE E SERVIÇOS -->
+                    <div class="col-xl-8">
+
+                        <!-- DADOS DO CLIENTE -->
+                        <div class="card shadow-sm mb-4 border-0">
+                            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 fw-bold text-navy"><i class="fa-solid fa-user me-2 text-primary"></i>3. Dados do Cliente & Endereço</h5>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-warning text-dark border d-none" id="bannerModoEdicao"><i class="fa-solid fa-pen-to-square me-1"></i> Editando Orçamento</span>
+                                    <span class="badge bg-light text-muted border" id="numeroOrcamentoPreview">ORC-AUTOMÁTICO</span>
+                                </div>
+                            </div>
+                            <div class="card-body p-4">
+                                <input type="hidden" id="orcamentoEmEdicaoId" value="">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Nome do Cliente *</label>
+                                        <input type="text" class="form-control" id="clienteNome" placeholder="Ex: Roberto Silva" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label fw-semibold">Telefone / WhatsApp</label>
+                                        <input type="text" class="form-control" id="clienteTelefone" placeholder="(31) 98765-4321">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label fw-semibold">E-mail</label>
+                                        <input type="email" class="form-control" id="clienteEmail" placeholder="cliente@email.com">
+                                    </div>
+                                    <div class="col-md-8">
+                                        <label class="form-label fw-semibold">Endereço da Obra / Serviço</label>
+                                        <input type="text" class="form-control" id="clienteEndereco" placeholder="Rua, número, complemento, bairro">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold">Cidade do Serviço</label>
+                                        <input type="text" class="form-control bg-light" id="clienteCidade" placeholder="Cidade de atendimento" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FORMULÁRIO DE SELEÇÃO DE SERVIÇOS -->
+                        <div class="card shadow-sm mb-4 border-0">
+                            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                <div>
+                                    <h5 class="mb-0 fw-bold text-navy"><i class="fa-solid fa-wrench me-2 text-warning"></i>4. Selecione os Serviços Elétricos</h5>
+                                    <small class="text-muted">Valores atualizados para a cidade de <strong class="text-primary" id="subtituloCidadeServicos">Belo Horizonte (BH)</strong></small>
+                                </div>
+                                <div class="input-group input-group-sm w-auto">
+                                    <span class="input-group-text bg-light"><i class="fa-solid fa-magnifying-glass"></i></span>
+                                    <input type="text" class="form-control" id="buscaServicoRapido" placeholder="Filtrar serviços..." onkeyup="filtrarCatalogoServicos()">
+                                </div>
+                            </div>
+                            <div class="card-body p-4">
+
+                                <!-- FILTRO DE CATEGORIAS -->
+                                <div class="d-flex flex-wrap gap-2 mb-3" id="containerCategoriasFiltro">
+                                    <button type="button" class="category-pill-btn active" onclick="filtrarPorCategoria('todas', this)">Todos</button>
+                                    <button type="button" class="category-pill-btn" onclick="filtrarPorCategoria('Quadro de Distribuição', this)">Quadro & Disjuntores</button>
+                                    <button type="button" class="category-pill-btn" onclick="filtrarPorCategoria('Chuveiros & Aquecimento', this)">Chuveiros & Aquecimento</button>
+                                    <button type="button" class="category-pill-btn" onclick="filtrarPorCategoria('Tomadas e Interruptores', this)">Tomadas & Interruptores</button>
+                                    <button type="button" class="category-pill-btn" onclick="filtrarPorCategoria('Iluminação', this)">Iluminação</button>
+                                    <button type="button" class="category-pill-btn" onclick="filtrarPorCategoria('Infraestrutura', this)">Infraestrutura</button>
+                                    <button type="button" class="category-pill-btn" onclick="filtrarPorCategoria('Instalação Completa', this)">Instalação Completa</button>
+                                </div>
+
+                                <!-- GRADE DE CARDS DE SERVIÇOS PARA SELEÇÃO DIRETA -->
+                                <div class="row g-3 mb-4" id="gradeCardsServicos" style="max-height: 480px; overflow-y: auto;">
+                                    <!-- Renderizado dinamicamente via JS -->
+                                </div>
+
+                                <!-- TABELA DE ITENS SELECIONADOS NO ORÇAMENTO -->
+                                <h6 class="fw-bold text-navy mt-4 mb-2"><i class="fa-solid fa-list-check me-2 text-success"></i>Serviços Selecionados para a Proposta:</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-0" id="tabelaItensOrcamento">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th style="width: 48%;">Descrição do Serviço</th>
+                                                <th style="width: 16%;" class="text-center">Quantidade</th>
+                                                <th style="width: 16%;" class="text-end">Unitário (R$)</th>
+                                                <th style="width: 15%;" class="text-end">Subtotal (R$)</th>
+                                                <th style="width: 5%;" class="text-center">Ação</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="corpoItensOrcamento">
+                                            <tr id="linhaSemItens">
+                                                <td colspan="5" class="text-center py-4 text-muted">
+                                                    <i class="fa-solid fa-cart-flatbed fa-2x mb-2 text-black-50 d-block"></i>
+                                                    Nenhum serviço selecionado ainda. Clique em <strong>"+ Incluir"</strong> em qualquer serviço acima para adicioná-lo.
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- MATERIAIS (OPCIONAL) -->
+                        <div class="card shadow-sm mb-4 border-0">
+                            <div class="card-header bg-white py-3 border-bottom">
+                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                    <h5 class="mb-0 fw-bold text-navy"><i class="fa-solid fa-boxes-stacked me-2 text-info"></i>5. Materiais & Peças (Opcional)</h5>
+                                    <div class="d-flex gap-2 align-items-center flex-wrap">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <input type="radio" class="btn-check" name="materiaisModo" id="modoMatCliente" value="cliente" checked onchange="atualizarModoMateriais()">
+                                            <label class="btn btn-outline-secondary" for="modoMatCliente">Por Conta do Cliente</label>
+
+                                            <input type="radio" class="btn-check" name="materiaisModo" id="modoMatIncluso" value="incluso" onchange="atualizarModoMateriais()">
+                                            <label class="btn btn-outline-primary" for="modoMatIncluso">Inclusos no Orçamento</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body p-4" id="painelMateriais">
+                                <div id="alertaMateriaisCliente" class="alert alert-secondary d-flex align-items-center gap-2 mb-0">
+                                    <i class="fa-solid fa-circle-info fs-5"></i>
+                                    <div><strong>Aviso no Orçamento:</strong> "Todos os materiais serão fornecidos pelo contratante. O orçamento refere-se estritamente à mão de obra e serviços técnicos."</div>
+                                </div>
+
+                                <div id="areaAdicionarMateriais" style="display: none;">
+                                    <!-- BOTÃO SUGERIR MATERIAIS -->
+                                    <div class="alert alert-info border-info d-flex justify-content-between align-items-center mb-3 py-2">
+                                        <div>
+                                            <i class="fa-solid fa-wand-magic-sparkles me-2"></i>
+                                            <strong>Sugestão Automática:</strong> O sistema pode sugerir os principais componentes com preços de mercado (BH/MG) baseado nos serviços selecionados.
+                                        </div>
+                                        <button type="button" class="btn btn-info btn-sm fw-bold text-white ms-3 text-nowrap" onclick="sugerirMateriais()" id="btnSugerirMateriais">
+                                            <i class="fa-solid fa-bolt me-1"></i> Sugerir Materiais
+                                        </button>
+                                    </div>
+
+                                    <div class="p-3 bg-light rounded-3 mb-3 border">
+                                        <div class="row g-2 align-items-end">
+                                            <div class="col-md-5">
+                                                <label class="form-label fw-semibold small text-muted">Descrição do Material</label>
+                                                <input type="text" class="form-control" id="inputMatDescricao" placeholder="Ex: Cabo Flexível 6mm², Disjuntor 32A...">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label fw-semibold small text-muted">Unidade</label>
+                                                <input type="text" class="form-control" id="inputMatUnidade" value="un" placeholder="un / m / rolo">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label fw-semibold small text-muted">Quantidade</label>
+                                                <input type="number" class="form-control" id="inputMatQtd" value="1" min="1" step="0.5">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label fw-semibold small text-muted">Valor Unit. (R$)</label>
+                                                <input type="number" class="form-control" id="inputMatPreco" value="0.00" step="0.5">
+                                            </div>
+                                            <div class="col-md-1">
+                                                <button type="button" class="btn btn-info text-white w-100 fw-bold" onclick="adicionarMaterial()">
+                                                    <i class="fa-solid fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm align-middle" id="tabelaMateriais">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Material</th>
+                                                    <th class="text-center">Qtd</th>
+                                                    <th class="text-end">Unit. (R$)</th>
+                                                    <th class="text-end">Subtotal (R$)</th>
+                                                    <th class="text-center">Ação</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="corpoMateriais">
+                                                <tr><td colspan="5" class="text-center text-muted small py-2">Nenhum material listado.</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- COLUNA DIREITA: RESUMO, CONDIÇÕES E EMISSÃO -->
+                    <div class="col-xl-4">
+
+                        <!-- CARD RESUMO FINANCEIRO -->
+                        <div class="card shadow-sm mb-4 border-0 card-totais sticky-lg-top" style="top: 80px;">
+                            <div class="card-header bg-navy text-white py-3">
+                                <h5 class="mb-0 fw-bold"><i class="fa-solid fa-receipt me-2 text-warning"></i>5. Resumo do Orçamento</h5>
+                            </div>
+                            <div class="card-body p-4">
+
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Total de Serviços:</span>
+                                    <strong class="fs-6" id="resumoTotalServicos">R$ 0,00</strong>
+                                </div>
+
+                                <div class="d-flex justify-content-between mb-2" id="linhaResumoMateriais" style="display: none !important;">
+                                    <span class="text-muted">Total de Materiais:</span>
+                                    <strong class="fs-6 text-info" id="resumoTotalMateriais">R$ 0,00</strong>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-muted">Deslocamento (<span id="resumoNomeRegiao">Região</span>):</span>
+                                    <div class="input-group input-group-sm w-50">
+                                        <span class="input-group-text">R$</span>
+                                        <input type="number" class="form-control text-end" id="inputTaxaDeslocamento" value="0.00" step="5" onchange="recalcularTotais()">
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="text-muted">Desconto:</span>
+                                    <div class="input-group input-group-sm w-50">
+                                        <span class="input-group-text">R$</span>
+                                        <input type="number" class="form-control text-end text-danger" id="inputDesconto" value="0.00" step="5" onchange="recalcularTotais()">
+                                    </div>
+                                </div>
+
+                                <hr>
+
+                                <div class="total-geral-box p-3 rounded-3 text-center mb-4">
+                                    <div class="text-muted small text-uppercase fw-bold mb-1">VALOR TOTAL DO ORÇAMENTO</div>
+                                    <div class="fs-2 fw-bolder text-navy" id="resumoTotalGeral">R$ 0,00</div>
+                                </div>
+
+                                <!-- CONDIÇÕES COMERCIAIS -->
+                                <h6 class="fw-bold text-navy mb-2"><i class="fa-solid fa-handshake me-1 text-primary"></i> Condições da Proposta</h6>
+                                
+                                <div class="mb-2">
+                                    <label class="form-label small text-muted mb-1">Forma de Pagamento:</label>
+                                    <input type="text" class="form-control form-control-sm" id="condPagamento" value="50% na aprovação e 50% na conclusão (PIX, Dinheiro ou Cartão)">
+                                </div>
+
+                                <div class="row g-2 mb-2">
+                                    <div class="col-6">
+                                        <label class="form-label small text-muted mb-1">Validade (dias):</label>
+                                        <input type="number" class="form-control form-control-sm" id="condValidade" value="15">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small text-muted mb-1">Prazo Execução:</label>
+                                        <input type="text" class="form-control form-control-sm" id="condPrazo" value="A combinar / Imediato">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label small text-muted mb-1">Garantia:</label>
+                                    <input type="text" class="form-control form-control-sm" id="condGarantia" value="90 dias conforme normas ABNT NBR 5410">
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label small text-muted mb-1">Observações Técnicas:</label>
+                                    <textarea class="form-control form-control-sm" id="condObservacoes" rows="2" placeholder="Ex: Serviços serão realizados com disjuntor desenergizado."></textarea>
+                                </div>
+
+                                <!-- BOTÕES DE AÇÃO -->
+                                <div class="d-grid gap-2">
+                                    <button type="button" class="btn btn-generate-quote btn-lg fw-bolder py-3 shadow fs-5" onclick="gerarOrcamentoEImprimirPDF()">
+                                        <i class="fa-solid fa-file-pdf me-2"></i> GERAR ORÇAMENTO & ABRIR PDF
+                                    </button>
+                                    <div class="row g-2 mt-1">
+                                        <div class="col-6">
+                                            <button type="button" class="btn btn-outline-success w-100 fw-bold" onclick="salvarOrcamento(false)">
+                                                <i class="fa-solid fa-floppy-disk me-1"></i> Salvar Apenas
+                                            </button>
+                                        </div>
+                                        <div class="col-6">
+                                            <button type="button" class="btn btn-outline-secondary w-100" onclick="limparFormularioOrcamento()">
+                                                <i class="fa-solid fa-broom me-1"></i> Limpar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ========================================== -->
+            <!-- ABA 2: HISTÓRICO DE ORÇAMENTOS -->
+            <!-- ========================================== -->
+            <div class="tab-pane fade" id="historico" role="tabpanel">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <h5 class="mb-0 fw-bold text-navy"><i class="fa-solid fa-folder-open me-2 text-primary"></i>Histórico de Orçamentos Emitidos</h5>
+                            <small class="text-muted"><i class="fa-solid fa-computer-mouse me-1 text-primary"></i>Dê <strong>2 cliques</strong> em qualquer orçamento na tabela para abri-lo / imprimir diretamente em PDF.</small>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <input type="text" class="form-control form-control-sm" id="filtroHistorico" placeholder="Pesquisar por cliente, número ou região..." onkeyup="filtrarTabelaHistorico()">
+                            <button class="btn btn-outline-primary btn-sm" onclick="carregarHistorico()"><i class="fa-solid fa-rotate-right"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle" id="tabelaHistorico">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Número</th>
+                                        <th>Data</th>
+                                        <th>Cliente</th>
+                                        <th>Região</th>
+                                        <th class="text-end">Valor Total</th>
+                                        <th class="text-center">Status</th>
+                                        <th class="text-center">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="corpoHistorico">
+                                    <tr><td colspan="7" class="text-center py-4 text-muted">Carregando histórico...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- ABA 3: TABELA DE PREÇOS POR REGIÃO -->
+            <!-- ========================================== -->
+            <div class="tab-pane fade" id="matriz" role="tabpanel">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <h5 class="mb-0 fw-bold text-navy"><i class="fa-solid fa-table-cells me-2 text-warning"></i>Tabela Geral de Preços por Região</h5>
+                            <small class="text-muted">Você pode alterar qualquer preço diretamente na tabela e clicar em "Salvar". O programa usará esses valores automaticamente nos orçamentos daquela região.</small>
+                        </div>
+                        <button class="btn btn-primary btn-sm" onclick="carregarMatrizPrecos()">
+                            <i class="fa-solid fa-rotate-right me-1"></i>Atualizar Tabela
+                        </button>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="table-responsive" id="containerMatrizPrecos">
+                            <div class="text-center py-4 text-muted">Carregando tabela de preços...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- ABA 4: GERENCIAR SERVIÇOS & REGIÕES -->
+            <!-- ========================================== -->
+            <div class="tab-pane fade" id="cadastros" role="tabpanel">
+                <div class="row g-4">
+                    <!-- GESTÃO DE REGIÕES -->
+                    <div class="col-lg-5">
+                        <div class="card shadow-sm border-0 mb-4">
+                            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 fw-bold text-navy"><i class="fa-solid fa-map-pin me-2 text-primary"></i>Regiões de Atendimento</h5>
+                                <button class="btn btn-sm btn-primary" onclick="abrirModalNovaRegiao()"><i class="fa-solid fa-plus me-1"></i>Nova Região</button>
+                            </div>
+                            <div class="card-body p-4">
+                                <p class="text-muted small">Cadastre as cidades, bairros ou zonas de atendimento. Ao adicionar uma região, os preços são calculados automaticamente e podem ser personalizados.</p>
+                                <div class="list-group" id="listaRegioesCadastradas">
+                                    <!-- Carregado via JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GESTÃO DE SERVIÇOS -->
+                    <div class="col-lg-7">
+                        <div class="card shadow-sm border-0 mb-4">
+                            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 fw-bold text-navy"><i class="fa-solid fa-screwdriver-wrench me-2 text-warning"></i>Catálogo de Serviços Elétricos</h5>
+                                <button class="btn btn-sm btn-warning fw-bold" onclick="abrirModalNovoServico()"><i class="fa-solid fa-plus me-1"></i>Novo Serviço</button>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle table-sm" id="tabelaServicosCadastrados">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Serviço</th>
+                                                <th>Categoria</th>
+                                                <th>Unidade</th>
+                                                <th class="text-end">Preço Base (R$)</th>
+                                                <th class="text-center">Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="corpoServicosCadastrados">
+                                            <!-- Carregado via JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- ABA 5: CONFIGURAÇÕES DA EMPRESA -->
+            <!-- ========================================== -->
+            <div class="tab-pane fade" id="config" role="tabpanel">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white py-3 border-bottom">
+                        <h5 class="mb-0 fw-bold text-navy"><i class="fa-solid fa-building me-2 text-primary"></i>Dados da Potencial Volt para o Cabeçalho do Orçamento</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <form id="formConfiguracoes" onsubmit="salvarConfiguracoes(event)">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Nome da Empresa</label>
+                                    <input type="text" class="form-control" id="cfgEmpresaNome" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Slogan / Descrição Curta</label>
+                                    <input type="text" class="form-control" id="cfgEmpresaSlogan">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Eletricista / Responsável Técnico</label>
+                                    <input type="text" class="form-control" id="cfgResponsavelNome" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Telefone / WhatsApp</label>
+                                    <input type="text" class="form-control" id="cfgTelefone">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">E-mail</label>
+                                    <input type="email" class="form-control" id="cfgEmail">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Chave PIX para Pagamentos</label>
+                                    <input type="text" class="form-control" id="cfgChavePix" placeholder="CNPJ, E-mail, Celular ou Chave Aleatória">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Cidade Sede</label>
+                                    <input type="text" class="form-control" id="cfgCidadeSede">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Termo Padrão de Garantia</label>
+                                    <textarea class="form-control" id="cfgGarantiaPadrao" rows="2"></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Forma Padrão de Pagamento</label>
+                                    <textarea class="form-control" id="cfgFormaPagamentoPadrao" rows="2"></textarea>
+                                </div>
+                            </div>
+                            <div class="mt-4 text-end">
+                                <button type="submit" class="btn btn-primary px-4 fw-bold">
+                                    <i class="fa-solid fa-floppy-disk me-2"></i>Salvar Dados da Empresa
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ==================== MODAL COPIAR WHATSAPP ==================== -->
+    <div class="modal fade" id="modalWhatsApp" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title"><i class="fa-brands fa-whatsapp me-2"></i>Enviar pelo WhatsApp</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="small text-muted mb-2">Mensagem formatada e pronta para enviar ao cliente:</p>
+                    <textarea class="form-control font-monospace small" id="textoWhatsApp" rows="12" readonly></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-success fw-bold" onclick="copiarTextoWhatsApp()">
+                        <i class="fa-solid fa-copy me-1"></i> Copiar Mensagem
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL NOVA REGIÃO ==================== -->
+    <div class="modal fade" id="modalRegiao" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-navy text-white">
+                    <h5 class="modal-title" id="modalRegiaoTitulo"><i class="fa-solid fa-map-location-dot me-2"></i>Cadastrar Região</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formRegiao">
+                        <input type="hidden" id="modalRegiaoId">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Nome da Região *</label>
+                            <input type="text" class="form-control" id="modalRegiaoNome" placeholder="Ex: Zona Norte, ABC Paulista, Guarujá" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Cidades / Bairros Abrangidos</label>
+                            <input type="text" class="form-control" id="modalRegiaoDescricao" placeholder="Ex: Santo André, São Bernardo, São Caetano">
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">Taxa Deslocamento (R$)</label>
+                                <input type="number" class="form-control" id="modalRegiaoTaxa" value="0.00" step="5">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">Multiplicador Base</label>
+                                <input type="number" class="form-control" id="modalRegiaoMult" value="1.0" step="0.05" title="Ex: 1.20 aplica 20% a mais do preço base">
+                                <small class="text-muted">1.0 = base | 1.25 = +25%</small>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary fw-bold" onclick="salvarModalRegiao()">Salvar Região</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL NOVO SERVIÇO ==================== -->
+    <div class="modal fade" id="modalServico" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-navy text-white">
+                    <h5 class="modal-title" id="modalServicoTitulo"><i class="fa-solid fa-wrench me-2 text-warning"></i>Cadastrar Serviço Elétrico</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formServico">
+                        <input type="hidden" id="modalServicoId">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Nome do Serviço *</label>
+                            <input type="text" class="form-control" id="modalServicoNome" placeholder="Ex: Instalação de Ponto de Chuveiro" required>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">Categoria</label>
+                                <select class="form-select" id="modalServicoCategoria">
+                                    <option value="Quadro de Distribuição">Quadro de Distribuição</option>
+                                    <option value="Tomadas e Interruptores">Tomadas e Interruptores</option>
+                                    <option value="Iluminação">Iluminação</option>
+                                    <option value="Chuveiros & Aquecimento">Chuveiros & Aquecimento</option>
+                                    <option value="Infraestrutura">Infraestrutura</option>
+                                    <option value="Instalação Completa">Instalação Completa</option>
+                                    <option value="Automação & Sensores">Automação & Sensores</option>
+                                    <option value="Climatização">Climatização</option>
+                                    <option value="Diagnóstico & Laudos">Diagnóstico & Laudos</option>
+                                    <option value="Geral">Geral</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold">Unidade de Medida</label>
+                                <input type="text" class="form-control" id="modalServicoUnidade" value="unidade" placeholder="unidade, metro, ponto, hora">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Preço Base de Referência (R$) *</label>
+                            <input type="number" class="form-control" id="modalServicoPrecoBase" step="1" required>
+                            <small class="text-muted">Servirá de referência para calcular o preço padrão de cada região.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Descrição / Detalhes Técnicos</label>
+                            <textarea class="form-control" id="modalServicoDescricao" rows="2" placeholder="O que está incluso na execução do serviço"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-warning fw-bold" onclick="salvarModalServico()">Salvar Serviço</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL ORÇAMENTO PRONTO ==================== -->
+    <div class="modal fade" id="modalOrcamentoPronto" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-navy text-white">
+                    <h5 class="modal-title"><i class="fa-solid fa-circle-check text-success me-2"></i>Orçamento Gerado com Sucesso!</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center p-4">
+                    <div class="badge bg-light text-navy border fs-6 mb-2" id="prontoOrcNumero">ORC-2026-0001</div>
+                    <h4 class="fw-bolder text-navy mb-1" id="prontoOrcCliente">Cliente</h4>
+                    <p class="text-muted small mb-3" id="prontoOrcTrajeto">Belo Horizonte (BH) ➔ Lagoa Santa</p>
+                    
+                    <div class="p-3 bg-light rounded-3 border mb-3">
+                        <span class="text-muted small d-block">VALOR TOTAL DO ORÇAMENTO:</span>
+                        <span class="fs-2 fw-bolder text-success" id="prontoOrcTotal">R$ 0,00</span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a href="#" target="_blank" class="btn btn-warning btn-lg fw-bold shadow-sm" id="btnProntoImprimirPDF">
+                            <i class="fa-solid fa-print me-2"></i> Abrir & Imprimir PDF
+                        </a>
+                        <button type="button" class="btn btn-success fw-bold" id="btnProntoWhatsApp" onclick="abrirModalWhatsApp(ultimoOrcamentoId)">
+                            <i class="fa-brands fa-whatsapp me-2"></i> Enviar pelo WhatsApp
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">Criar Novo Orçamento</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/app.js"></script>
+
+</body>
+</html>
