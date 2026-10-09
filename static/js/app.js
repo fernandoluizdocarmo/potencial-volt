@@ -223,7 +223,7 @@ function renderizarGradeServicos(filtroTexto = '') {
         const estaAdicionado = Boolean(itemJaAdicionado);
 
         const col = document.createElement('div');
-        col.className = 'col-md-6 col-lg-4';
+        col.className = 'col-12 col-sm-6 col-lg-4';
         col.innerHTML = `
             <div class="service-card p-3 h-100 d-flex flex-column justify-content-between ${estaAdicionado ? 'item-adicionado' : ''}" id="card_serv_${s.servico_id}">
                 <div>

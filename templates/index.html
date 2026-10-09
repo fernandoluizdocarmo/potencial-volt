@@ -128,9 +128,9 @@
                     </div>
                 </div>
 
-                <div class="row g-4">
+                <div class="row g-3">
                     <!-- COLUNA ESQUERDA: CLIENTE E SERVIÇOS -->
-                    <div class="col-xl-8">
+                    <div class="col-12 col-lg-8">
 
                         <!-- DADOS DO CLIENTE -->
                         <div class="card shadow-sm mb-4 border-0">
@@ -194,7 +194,7 @@
                                 </div>
 
                                 <!-- GRADE DE CARDS DE SERVIÇOS PARA SELEÇÃO DIRETA -->
-                                <div class="row g-3 mb-4" id="gradeCardsServicos" style="max-height: 480px; overflow-y: auto;">
+                                <div class="row g-2 mb-4" id="gradeCardsServicos" style="max-height: 480px; overflow-y: auto;">
                                     <!-- Renderizado dinamicamente via JS -->
                                 </div>
 
@@ -260,25 +260,25 @@
 
                                     <div class="p-3 bg-light rounded-3 mb-3 border">
                                         <div class="row g-2 align-items-end">
-                                            <div class="col-md-5">
+                                            <div class="col-12 col-md-5">
                                                 <label class="form-label fw-semibold small text-muted">Descrição do Material</label>
                                                 <input type="text" class="form-control" id="inputMatDescricao" placeholder="Ex: Cabo Flexível 6mm², Disjuntor 32A...">
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-4 col-md-2">
                                                 <label class="form-label fw-semibold small text-muted">Unidade</label>
-                                                <input type="text" class="form-control" id="inputMatUnidade" value="un" placeholder="un / m / rolo">
+                                                <input type="text" class="form-control" id="inputMatUnidade" value="un" placeholder="un / m">
                                             </div>
-                                            <div class="col-md-2">
-                                                <label class="form-label fw-semibold small text-muted">Quantidade</label>
+                                            <div class="col-4 col-md-2">
+                                                <label class="form-label fw-semibold small text-muted">Qtd</label>
                                                 <input type="number" class="form-control" id="inputMatQtd" value="1" min="1" step="0.5">
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-4 col-md-2">
                                                 <label class="form-label fw-semibold small text-muted">Valor Unit. (R$)</label>
                                                 <input type="number" class="form-control" id="inputMatPreco" value="0.00" step="0.5">
                                             </div>
-                                            <div class="col-md-1">
+                                            <div class="col-12 col-md-1">
                                                 <button type="button" class="btn btn-info text-white w-100 fw-bold" onclick="adicionarMaterial()">
-                                                    <i class="fa-solid fa-plus"></i>
+                                                    <i class="fa-solid fa-plus"></i> Adicionar
                                                 </button>
                                             </div>
                                         </div>
@@ -306,7 +306,7 @@
                     </div>
 
                     <!-- COLUNA DIREITA: RESUMO, CONDIÇÕES E EMISSÃO -->
-                    <div class="col-xl-4">
+                    <div class="col-12 col-lg-4">
 
                         <!-- CARD RESUMO FINANCEIRO -->
                         <div class="card shadow-sm mb-4 border-0 card-totais sticky-lg-top" style="top: 80px;">
@@ -526,44 +526,44 @@
                     <div class="card-body p-4">
                         <form id="formConfiguracoes" onsubmit="salvarConfiguracoes(event)">
                             <div class="row g-3">
-                                <div class="col-md-6">
+                                <div class="col-12 col-md-6">
                                     <label class="form-label fw-semibold">Nome da Empresa</label>
                                     <input type="text" class="form-control" id="cfgEmpresaNome" required>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-12 col-md-6">
                                     <label class="form-label fw-semibold">Slogan / Descrição Curta</label>
                                     <input type="text" class="form-control" id="cfgEmpresaSlogan">
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-12 col-md-4">
                                     <label class="form-label fw-semibold">Eletricista / Responsável Técnico</label>
                                     <input type="text" class="form-control" id="cfgResponsavelNome" required>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-12 col-md-4">
                                     <label class="form-label fw-semibold">Telefone / WhatsApp</label>
                                     <input type="text" class="form-control" id="cfgTelefone">
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-12 col-md-4">
                                     <label class="form-label fw-semibold">E-mail</label>
                                     <input type="email" class="form-control" id="cfgEmail">
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-12 col-md-6">
                                     <label class="form-label fw-semibold">Chave PIX para Pagamentos</label>
                                     <input type="text" class="form-control" id="cfgChavePix" placeholder="CNPJ, E-mail, Celular ou Chave Aleatória">
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-12 col-md-6">
                                     <label class="form-label fw-semibold">Cidade Sede</label>
                                     <input type="text" class="form-control" id="cfgCidadeSede">
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-12 col-md-6">
                                     <label class="form-label fw-semibold">Termo Padrão de Garantia</label>
                                     <textarea class="form-control" id="cfgGarantiaPadrao" rows="2"></textarea>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-12 col-md-6">
                                     <label class="form-label fw-semibold">Forma Padrão de Pagamento</label>
                                     <textarea class="form-control" id="cfgFormaPagamentoPadrao" rows="2"></textarea>
                                 </div>
                             </div>
-                            <div class="mt-4 text-end">
+                            <div class="mt-4 d-grid d-md-flex justify-content-md-end">
                                 <button type="submit" class="btn btn-primary px-4 fw-bold">
                                     <i class="fa-solid fa-floppy-disk me-2"></i>Salvar Dados da Empresa
                                 </button>
