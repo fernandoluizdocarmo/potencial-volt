@@ -8,3 +8,8 @@ venv/
 ENV/
 .vscode/
 .idea/
+node_modules/
+package.json
+package-lock.json
+screenshot_mobile.js
+*.png

@@ -41,33 +41,40 @@
     <div class="container-fluid px-4 py-4">
 
         <!-- NAVEGAÇÃO EM ABAS -->
-        <ul class="nav nav-pills custom-pills mb-4" id="mainTab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="novo-orcamento-tab" data-bs-toggle="pill" data-bs-target="#novo-orcamento" type="button" role="tab">
-                    <i class="fa-solid fa-calculator me-2"></i>Novo Orçamento
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="historico-tab" data-bs-toggle="pill" data-bs-target="#historico" type="button" role="tab" onclick="carregarHistorico()">
-                    <i class="fa-solid fa-clock-rotate-left me-2"></i>Histórico de Orçamentos
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="matriz-tab" data-bs-toggle="pill" data-bs-target="#matriz" type="button" role="tab" onclick="carregarMatrizPrecos()">
-                    <i class="fa-solid fa-table-cells me-2"></i>Preços por Região
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="cadastros-tab" data-bs-toggle="pill" data-bs-target="#cadastros" type="button" role="tab" onclick="carregarCadastros()">
-                    <i class="fa-solid fa-layer-group me-2"></i>Gerenciar Serviços & Regiões
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="config-tab" data-bs-toggle="pill" data-bs-target="#config" type="button" role="tab" onclick="carregarConfiguracoes()">
-                    <i class="fa-solid fa-gear me-2"></i>Configurações da Empresa
-                </button>
-            </li>
-        </ul>
+        <div class="nav-tabs-wrapper mb-3">
+            <ul class="nav nav-pills custom-pills" id="mainTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="novo-orcamento-tab" data-bs-toggle="pill" data-bs-target="#novo-orcamento" type="button" role="tab">
+                        <i class="fa-solid fa-calculator"></i>
+                        <span class="tab-label">Novo Orçamento</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="historico-tab" data-bs-toggle="pill" data-bs-target="#historico" type="button" role="tab" onclick="carregarHistorico()">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span class="tab-label">Histórico</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="matriz-tab" data-bs-toggle="pill" data-bs-target="#matriz" type="button" role="tab" onclick="carregarMatrizPrecos()">
+                        <i class="fa-solid fa-table-cells"></i>
+                        <span class="tab-label">Preços</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="cadastros-tab" data-bs-toggle="pill" data-bs-target="#cadastros" type="button" role="tab" onclick="carregarCadastros()">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span class="tab-label">Gerenciar</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="config-tab" data-bs-toggle="pill" data-bs-target="#config" type="button" role="tab" onclick="carregarConfiguracoes()">
+                        <i class="fa-solid fa-gear"></i>
+                        <span class="tab-label">Configurações</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
 
         <!-- CONTEÚDO DAS ABAS -->
         <div class="tab-content" id="mainTabContent">

@@ -31,6 +31,15 @@ body {
 
 .fs-7 { font-size: 0.78rem; }
 
+/* ===================== WRAPPER DE ABAS ===================== */
+.nav-tabs-wrapper {
+    background: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    padding: 6px;
+    overflow: hidden;
+}
+
 /* ===================== PILLS DE NAVEGAÇÃO ===================== */
 .custom-pills {
     display: flex;
@@ -38,8 +47,9 @@ body {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    gap: 6px;
-    padding-bottom: 4px;
+    gap: 4px;
+    padding: 0;
+    margin: 0;
 }
 
 .custom-pills::-webkit-scrollbar { display: none; }
@@ -47,23 +57,71 @@ body {
 .custom-pills .nav-link {
     color: #475569;
     font-weight: 600;
-    padding: 9px 16px;
+    padding: 9px 14px;
     border-radius: 8px;
     white-space: nowrap;
     flex-shrink: 0;
     transition: all 0.2s ease;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
+    background: transparent;
+    border: none;
     font-size: 0.88rem;
+    display: flex;
+    align-items: center;
+    gap: 7px;
 }
 
+.custom-pills .nav-link i { font-size: 0.95rem; }
 .custom-pills .nav-link:hover { color: var(--navy-main); background-color: #f1f5f9; }
 
 .custom-pills .nav-link.active {
     background-color: var(--navy-main);
     color: #ffffff;
-    border-color: var(--navy-main);
-    box-shadow: 0 4px 10px rgba(11, 25, 44, 0.15);
+    box-shadow: 0 3px 8px rgba(11, 25, 44, 0.2);
+}
+
+/* ===================== ABAS MOBILE — BOTTOM NAV STYLE ===================== */
+@media (max-width: 767.98px) {
+    .nav-tabs-wrapper {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        border-top: none;
+        padding: 4px 6px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .custom-pills {
+        justify-content: space-between;
+        gap: 2px;
+    }
+
+    .custom-pills .nav-item {
+        flex: 1;
+    }
+
+    .custom-pills .nav-link {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 7px 4px;
+        font-size: 0.62rem;
+        gap: 3px;
+        width: 100%;
+        text-align: center;
+        border-radius: 8px;
+    }
+
+    .custom-pills .nav-link i {
+        font-size: 1.05rem;
+    }
+
+    .tab-label {
+        display: block;
+        line-height: 1.1;
+    }
 }
 
 /* ===================== SELETOR DE REGIÃO ===================== */
@@ -330,10 +388,33 @@ body {
     #tabelaHistorico th, #tabelaHistorico td {
         font-size: 0.78rem;
         padding: 6px;
+        white-space: nowrap;
     }
 
     /* ---- Tabela matriz de preços ---- */
     .input-preco-matriz { width: 80px; font-size: 0.82rem; }
+    #containerMatrizPrecos table th,
+    #containerMatrizPrecos table td {
+        white-space: nowrap;
+    }
+
+    /* ---- Scroll horizontal fluido e visível no celular ---- */
+    .table-responsive {
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        -webkit-overflow-scrolling: touch;
+        overflow-x: auto !important;
+        position: relative;
+    }
+
+    .table-responsive::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+    }
 
     /* ---- Abas de Gerenciar: colunas em coluna única ---- */
     .col-lg-5, .col-lg-7 {
