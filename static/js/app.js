@@ -734,6 +734,27 @@ async function carregarHistorico() {
                 const card = document.createElement('div');
                 card.className = 'card border shadow-sm mb-3 item-historico-card';
                 card.style.borderRadius = '10px';
+                card.style.cursor = 'pointer';
+
+                // Duplo clique (Desktop)
+                card.ondblclick = (e) => {
+                    if (e.target.closest('select') || e.target.closest('button') || e.target.closest('a')) return;
+                    abrirOrcamentoImpressao(orc.id);
+                };
+
+                // Duplo toque / Toque rápido para Celular (Touch screens)
+                let ultimoToque = 0;
+                card.addEventListener('touchend', (e) => {
+                    if (e.target.closest('select') || e.target.closest('button') || e.target.closest('a')) return;
+                    const agora = new Date().getTime();
+                    const diferenca = agora - ultimoToque;
+                    if (diferenca < 400 && diferenca > 0) {
+                        e.preventDefault();
+                        abrirOrcamentoImpressao(orc.id);
+                    }
+                    ultimoToque = agora;
+                });
+
                 card.innerHTML = `
                     <div class="card-body p-3">
                         <div class="d-flex justify-content-between align-items-start mb-2">
