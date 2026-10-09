@@ -163,6 +163,38 @@
                 print-color-adjust: exact;
             }
         }
+
+        /* TELA DE CELULAR / MOBILE (< 768px) */
+        @media screen and (max-width: 768px) {
+            .print-container {
+                margin: 10px auto;
+                padding: 16px;
+                border-radius: 8px;
+            }
+            .brand-title {
+                font-size: 20px;
+            }
+            .quote-badge {
+                text-align: left;
+                margin-top: 10px;
+                padding: 6px 12px;
+            }
+            .no-print-bar .container {
+                flex-direction: column;
+                gap: 8px;
+                align-items: stretch !important;
+            }
+            .no-print-bar .d-flex {
+                justify-content: space-between;
+            }
+            .total-highlight {
+                font-size: 20px;
+            }
+            .table-custom th, .table-custom td {
+                font-size: 11px;
+                padding: 6px 4px;
+            }
+        }
     </style>
 </head>
 <body>
