@@ -463,11 +463,16 @@
                     <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
                         <div>
                             <h5 class="mb-0 fw-bold text-navy"><i class="fa-solid fa-table-cells me-2 text-warning"></i>Tabela Geral de Preços por Região</h5>
-                            <small class="text-muted">Você pode alterar qualquer preço diretamente na tabela e clicar em "Salvar". O programa usará esses valores automaticamente nos orçamentos daquela região.</small>
+                            <small class="text-muted">Preços sincronizados com as cotações de mercado de BH e RMBH. Você pode editar manualmente ou acionar o robô de cotação.</small>
                         </div>
-                        <button class="btn btn-primary btn-sm" onclick="carregarMatrizPrecos()">
-                            <i class="fa-solid fa-rotate-right me-1"></i>Atualizar Tabela
-                        </button>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button class="btn btn-outline-success btn-sm fw-bold shadow-sm" onclick="abrirModalRoboCotacao()">
+                                <i class="fa-solid fa-robot me-1"></i> Robô de Cotação de Mercado
+                            </button>
+                            <button class="btn btn-primary btn-sm shadow-sm" onclick="carregarMatrizPrecos()">
+                                <i class="fa-solid fa-rotate-right me-1"></i> Recarregar
+                            </button>
+                        </div>
                     </div>
                     <div class="card-body p-4">
                         <div class="table-responsive" id="containerMatrizPrecos">
@@ -736,6 +741,53 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">Criar Novo Orçamento</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL ROBÔ DE COTAÇÃO DE MERCADO ==================== -->
+    <div class="modal fade" id="modalRoboCotacao" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title"><i class="fa-solid fa-robot text-warning me-2"></i>Robô de Cotação de Mercado</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted small mb-3">
+                        O robô consulta a base de cotações das plataformas de serviços de BH e Região Metropolitana (GetNinjas, Habitissimo, Workfly) e atualiza automaticamente todos os <strong>24 serviços</strong> nas <strong>5 cidades</strong>.
+                    </p>
+
+                    <div class="card bg-light border p-3 mb-3">
+                        <h6 class="fw-bold mb-2 text-navy"><i class="fa-solid fa-sliders me-1"></i> Opções de Sincronização:</h6>
+                        
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="chkAplicarInflacao">
+                            <label class="form-check-label small" for="chkAplicarInflacao">
+                                <strong>Corrigir pela inflação oficial (IPCA / Banco Central)</strong>
+                            </label>
+                        </div>
+
+                        <div class="mt-2">
+                            <label class="form-label small fw-semibold">Ajuste Percentual Adicional (%):</label>
+                            <div class="input-group input-group-sm" style="max-width: 160px;">
+                                <input type="number" class="form-control" id="inputPercentualExtra" value="0" step="1" min="-30" max="50">
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <small class="text-muted" style="font-size: 0.75rem;">(Ex: digite 5 para aplicar +5% em todos os valores)</small>
+                        </div>
+                    </div>
+
+                    <div id="statusRoboCotacao" class="d-none alert alert-info py-2 small">
+                        <i class="fa-solid fa-spinner fa-spin me-2"></i> Consultando e atualizando tabela de preços...
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-success fw-bold" id="btnDispararRobo" onclick="dispararRoboCotacao()">
+                        <i class="fa-solid fa-bolt me-1"></i> Executar Cotação Agora
+                    </button>
                 </div>
             </div>
         </div>

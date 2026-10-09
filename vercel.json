@@ -10,5 +10,11 @@
       "src": "/(.*)",
       "dest": "app.py"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/atualizar-mercado",
+      "schedule": "0 0 1 * *"
+    }
   ]
 }

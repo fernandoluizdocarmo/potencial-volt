@@ -507,9 +507,51 @@ def api_atualizar_preco():
         VALUES (?, ?, ?)
         ON CONFLICT(servico_id, regiao_id) DO UPDATE SET preco = excluded.preco
     ''', (servico_id, regiao_id, float(preco)))
-    conn.commit()
-    conn.close()
     return jsonify({'sucesso': True, 'mensagem': 'Preço salvo com sucesso!'})
+
+
+# ======================== ROTAS DO ROBÔ DE COTAÇÃO ========================
+
+@app.route('/api/robo-cotacao/executar', methods=['POST'])
+def api_executar_robo_cotacao():
+    """
+    Executa o robô de cotação sob demanda pelo painel.
+    Permite opcionalmente aplicar índice de inflação oficial ou reajuste percentual.
+    """
+    from robo_cotacao import executar_robo_cotacao
+    dados = request.get_json() or {}
+    aplicar_inflacao = bool(dados.get('aplicar_inflacao', False))
+    percentual_extra = float(dados.get('percentual_extra', 0.0))
+
+    conn = get_connection()
+    try:
+        resultado = executar_robo_cotacao(conn, aplicar_inflacao=aplicar_inflacao, percentual_extra=percentual_extra)
+        conn.close()
+        return jsonify(resultado)
+    except Exception as e:
+        conn.close()
+        return jsonify({'erro': f"Erro ao executar robô: {str(e)}"}), 500
+
+
+@app.route('/api/cron/atualizar-mercado', methods=['GET', 'POST'])
+def api_cron_atualizar_mercado():
+    """
+    Endpoint chamado periodicamente pelo Cron Job da Vercel (ou chamado via webhook).
+    """
+    from robo_cotacao import executar_robo_cotacao
+    conn = get_connection()
+    try:
+        resultado = executar_robo_cotacao(conn, aplicar_inflacao=False, percentual_extra=0.0)
+        conn.close()
+        return jsonify({
+            'sucesso': True,
+            'origem': 'cron_job_automatico',
+            'resultado': resultado
+        })
+    except Exception as e:
+        conn.close()
+        return jsonify({'erro': str(e)}), 500
+
 
 
 # ======================== ROTAS DE ORÇAMENTOS ========================

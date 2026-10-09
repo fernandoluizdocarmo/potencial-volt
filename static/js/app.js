@@ -1265,3 +1265,65 @@ async function salvarConfiguracoes(e) {
         console.error('Erro ao salvar configurações:', err);
     }
 }
+
+// ====================================================
+// ROBÔ DE COTAÇÃO DE MERCADO
+// ====================================================
+function abrirModalRoboCotacao() {
+    const statusDiv = document.getElementById('statusRoboCotacao');
+    if (statusDiv) statusDiv.classList.add('d-none');
+    const modal = new bootstrap.Modal(document.getElementById('modalRoboCotacao'));
+    modal.show();
+}
+
+async function dispararRoboCotacao() {
+    const btn = document.getElementById('btnDispararRobo');
+    const statusDiv = document.getElementById('statusRoboCotacao');
+    const chkInflacao = document.getElementById('chkAplicarInflacao');
+    const inputExtra = document.getElementById('inputPercentualExtra');
+
+    btn.disabled = true;
+    statusDiv.classList.remove('d-none');
+    statusDiv.className = 'alert alert-info py-2 small';
+    statusDiv.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Consultando cotações de mercado e atualizando base...';
+
+    const payload = {
+        aplicar_inflacao: chkInflacao ? chkInflacao.checked : false,
+        percentual_extra: inputExtra ? (parseFloat(inputExtra.value) || 0) : 0
+    };
+
+    try {
+        const res = await fetch('/api/robo-cotacao/executar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const resp = await res.json();
+
+        if (resp.sucesso) {
+            statusDiv.className = 'alert alert-success py-2 small';
+            statusDiv.innerHTML = `<i class="fa-solid fa-circle-check me-2"></i> ${resp.mensagem} (${resp.total_precos_atualizados} preços recalculados)`;
+            
+            // Recarrega a tabela de preços na tela
+            if (typeof carregarMatrizPrecos === 'function') {
+                carregarMatrizPrecos();
+            }
+
+            setTimeout(() => {
+                const modalEl = document.getElementById('modalRoboCotacao');
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+            }, 2000);
+        } else {
+            statusDiv.className = 'alert alert-danger py-2 small';
+            statusDiv.innerHTML = `<i class="fa-solid fa-triangle-exclamation me-2"></i> Erro: ${resp.erro || 'Falha ao sincronizar'}`;
+        }
+    } catch (err) {
+        console.error('Erro ao executar robô:', err);
+        statusDiv.className = 'alert alert-danger py-2 small';
+        statusDiv.innerHTML = '<i class="fa-solid fa-triangle-exclamation me-2"></i> Erro ao conectar com o servidor.';
+    } finally {
+        btn.disabled = false;
+    }
+}
+
