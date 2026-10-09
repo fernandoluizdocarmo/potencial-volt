@@ -664,61 +664,119 @@ function limparFormularioOrcamento() {
 // ====================================================
 async function carregarHistorico() {
     const tbody = document.getElementById('corpoHistorico');
-    tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">Carregando histórico...</td></tr>';
+    const containerMobile = document.getElementById('listaHistoricoMobile');
+
+    if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">Carregando histórico...</td></tr>';
+    if (containerMobile) containerMobile.innerHTML = '<div class="text-center py-4 text-muted">Carregando histórico...</div>';
 
     try {
         const res = await fetch('/api/orcamentos');
         const lista = await res.json();
 
         if (lista.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">Nenhum orçamento emitido ainda.</td></tr>';
+            if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">Nenhum orçamento emitido ainda.</td></tr>';
+            if (containerMobile) containerMobile.innerHTML = '<div class="text-center py-4 text-muted">Nenhum orçamento emitido ainda.</div>';
             return;
         }
 
-        tbody.innerHTML = '';
-        lista.forEach(orc => {
-            const tr = document.createElement('tr');
-            tr.style.cursor = 'pointer';
-            tr.title = 'Dê 2 cliques para abrir e imprimir este orçamento';
-            tr.ondblclick = (e) => {
-                // Não dispara se o clique duplo foi em select ou botão
-                if (e.target.closest('select') || e.target.closest('button') || e.target.closest('a')) return;
-                abrirOrcamentoImpressao(orc.id);
-            };
+        if (tbody) tbody.innerHTML = '';
+        if (containerMobile) containerMobile.innerHTML = '';
 
+        lista.forEach(orc => {
             const trajetoInfo = (orc.regiao_origem_nome && orc.regiao_destino_nome) ? `${orc.regiao_origem_nome} ➔ ${orc.regiao_destino_nome}` : (orc.regiao_destino_nome || orc.regiao_nome || 'Geral');
-            tr.innerHTML = `
-                <td><strong>${orc.numero}</strong></td>
-                <td>${orc.data_criacao}</td>
-                <td>${orc.cliente_nome}</td>
-                <td><span class="badge bg-primary-subtle text-primary border">${trajetoInfo}</span></td>
-                <td class="text-end fw-bold">${formatarMoeda(orc.total_geral)}</td>
-                <td class="text-center" onclick="event.stopPropagation()">
-                    <select class="form-select form-select-sm d-inline-block w-auto" onchange="atualizarStatusOrcamento(${orc.id}, this.value)">
-                        <option value="Pendente" ${orc.status === 'Pendente' ? 'selected' : ''}>⏳ Pendente</option>
-                        <option value="Aprovado" ${orc.status === 'Aprovado' ? 'selected' : ''}>✅ Aprovado</option>
-                        <option value="Concluído" ${orc.status === 'Concluído' ? 'selected' : ''}>🎉 Concluído</option>
-                        <option value="Recusado" ${orc.status === 'Recusado' ? 'selected' : ''}>❌ Recusado</option>
-                    </select>
-                </td>
-                <td class="text-center" onclick="event.stopPropagation()">
-                    <div class="btn-group btn-group-sm">
-                        <button type="button" class="btn btn-outline-warning text-dark" onclick="editarOrcamento(${orc.id})" title="Editar Orçamento">
-                            <i class="fa-solid fa-pen-to-square"></i>
-                        </button>
-                        <button type="button" class="btn btn-outline-primary" onclick="abrirOrcamentoImpressao(${orc.id})" title="Abrir / Imprimir PDF">
-                            <i class="fa-solid fa-print"></i>
-                        </button>
-                        <button type="button" class="btn btn-outline-success" onclick="abrirModalWhatsApp(${orc.id})" title="Enviar WhatsApp">
-                            <i class="fa-brands fa-whatsapp"></i>
-                        </button>
-                        <button type="button" class="btn btn-outline-danger" onclick="excluirOrcamento(${orc.id})" title="Excluir">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
+
+            // 1. VERSÃO PARA COMPUTADOR (TABELA)
+            if (tbody) {
+                const tr = document.createElement('tr');
+                tr.className = 'item-historico-row';
+                tr.style.cursor = 'pointer';
+                tr.title = 'Dê 2 cliques para abrir e imprimir este orçamento';
+                tr.ondblclick = (e) => {
+                    if (e.target.closest('select') || e.target.closest('button') || e.target.closest('a')) return;
+                    abrirOrcamentoImpressao(orc.id);
+                };
+                tr.innerHTML = `
+                    <td><strong>${orc.numero}</strong></td>
+                    <td>${orc.data_criacao}</td>
+                    <td>${orc.cliente_nome}</td>
+                    <td><span class="badge bg-primary-subtle text-primary border">${trajetoInfo}</span></td>
+                    <td class="text-end fw-bold">${formatarMoeda(orc.total_geral)}</td>
+                    <td class="text-center" onclick="event.stopPropagation()">
+                        <select class="form-select form-select-sm d-inline-block w-auto" onchange="atualizarStatusOrcamento(${orc.id}, this.value)">
+                            <option value="Pendente" ${orc.status === 'Pendente' ? 'selected' : ''}>⏳ Pendente</option>
+                            <option value="Aprovado" ${orc.status === 'Aprovado' ? 'selected' : ''}>✅ Aprovado</option>
+                            <option value="Concluído" ${orc.status === 'Concluído' ? 'selected' : ''}>🎉 Concluído</option>
+                            <option value="Recusado" ${orc.status === 'Recusado' ? 'selected' : ''}>❌ Recusado</option>
+                        </select>
+                    </td>
+                    <td class="text-center" onclick="event.stopPropagation()">
+                        <div class="btn-group btn-group-sm">
+                            <button type="button" class="btn btn-outline-warning text-dark" onclick="editarOrcamento(${orc.id})" title="Editar Orçamento">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" onclick="abrirOrcamentoImpressao(${orc.id})" title="Abrir / Imprimir PDF">
+                                <i class="fa-solid fa-print"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-success" onclick="abrirModalWhatsApp(${orc.id})" title="Enviar WhatsApp">
+                                <i class="fa-brands fa-whatsapp"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-danger" onclick="excluirOrcamento(${orc.id})" title="Excluir">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            // 2. VERSÃO PARA CELULAR (CARDS 100% VISÍVEIS SEM ROLAR PRO LADO)
+            if (containerMobile) {
+                const card = document.createElement('div');
+                card.className = 'card border shadow-sm mb-3 item-historico-card';
+                card.style.borderRadius = '10px';
+                card.innerHTML = `
+                    <div class="card-body p-3">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <span class="badge bg-dark-navy text-white fw-bold me-1">${orc.numero}</span>
+                                <small class="text-muted">${orc.data_criacao}</small>
+                            </div>
+                            <div class="fs-6 fw-bolder text-success">${formatarMoeda(orc.total_geral)}</div>
+                        </div>
+
+                        <div class="mb-2">
+                            <h6 class="fw-bold mb-1 text-navy">${orc.cliente_nome}</h6>
+                            <span class="badge bg-primary-subtle text-primary border small">${trajetoInfo}</span>
+                        </div>
+
+                        <div class="d-flex align-items-center justify-content-between gap-2 pt-2 border-top">
+                            <div style="flex: 1; max-width: 140px;">
+                                <select class="form-select form-select-sm" onchange="atualizarStatusOrcamento(${orc.id}, this.value)">
+                                    <option value="Pendente" ${orc.status === 'Pendente' ? 'selected' : ''}>⏳ Pendente</option>
+                                    <option value="Aprovado" ${orc.status === 'Aprovado' ? 'selected' : ''}>✅ Aprovado</option>
+                                    <option value="Concluído" ${orc.status === 'Concluído' ? 'selected' : ''}>🎉 Concluído</option>
+                                    <option value="Recusado" ${orc.status === 'Recusado' ? 'selected' : ''}>❌ Recusado</option>
+                                </select>
+                            </div>
+                            <div class="d-flex gap-1">
+                                <button type="button" class="btn btn-warning btn-sm fw-bold text-dark px-2" onclick="editarOrcamento(${orc.id})" title="Editar">
+                                    <i class="fa-solid fa-pen-to-square"></i> Editar
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm px-2" onclick="abrirOrcamentoImpressao(${orc.id})" title="PDF">
+                                    <i class="fa-solid fa-print"></i>
+                                </button>
+                                <button type="button" class="btn btn-success btn-sm px-2" onclick="abrirModalWhatsApp(${orc.id})" title="WhatsApp">
+                                    <i class="fa-brands fa-whatsapp"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-danger btn-sm px-2" onclick="excluirOrcamento(${orc.id})" title="Excluir">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </td>
-            `;
-            tbody.appendChild(tr);
+                `;
+                containerMobile.appendChild(card);
+            }
         });
     } catch (err) {
         console.error('Erro ao carregar histórico:', err);
@@ -817,6 +875,11 @@ function filtrarTabelaHistorico() {
     const linhas = document.querySelectorAll('#corpoHistorico tr');
     linhas.forEach(l => {
         l.style.display = l.textContent.toLowerCase().includes(texto) ? '' : 'none';
+    });
+
+    const cards = document.querySelectorAll('#listaHistoricoMobile .item-historico-card');
+    cards.forEach(c => {
+        c.style.display = c.textContent.toLowerCase().includes(texto) ? '' : 'none';
     });
 }
 
